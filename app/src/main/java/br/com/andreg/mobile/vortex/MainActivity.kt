@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
@@ -21,8 +20,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import br.com.andreg.mobile.vortex.ui.screens.FavoritesScreen
+import br.com.andreg.mobile.vortex.ui.screens.HomeScreen
+import br.com.andreg.mobile.vortex.ui.screens.ProfileScreen
 import br.com.andreg.mobile.vortex.ui.theme.VortexTheme
 
 class MainActivity : ComponentActivity() {
@@ -59,11 +60,13 @@ fun VortexApp() {
             }
         }
     ) {
-        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            Greeting(
-                name = "Android",
-                modifier = Modifier.padding(innerPadding)
-            )
+        Scaffold {
+            innerPadding ->
+            when (currentDestination) {
+                AppDestinations.HOME -> HomeScreen(modifier = Modifier.padding(innerPadding))
+                AppDestinations.FAVORITES -> FavoritesScreen(modifier = Modifier.padding(innerPadding))
+                AppDestinations.PROFILE -> ProfileScreen(modifier = Modifier.padding(innerPadding))
+            }
         }
     }
 }
@@ -75,20 +78,4 @@ enum class AppDestinations(
     HOME("Home", Icons.Default.Home),
     FAVORITES("Favorites", Icons.Default.Favorite),
     PROFILE("Profile", Icons.Default.AccountBox),
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    VortexTheme {
-        Greeting("Android")
-    }
 }
