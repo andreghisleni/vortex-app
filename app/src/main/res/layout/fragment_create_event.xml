@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.events.CreateEvent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+        <TextView
+            android:id="@+id/textViewNm"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/event_name" />
+
+        <EditText
+            android:id="@+id/etNome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:autofillHints=""
+            android:ems="10"
+            android:hint="@string/nome_do_evento"
+            android:inputType="textPersonName" />
+<!--        <TextView-->
+<!--            android:id="@+id/textViewMail"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="e-mail" />-->
+<!--        <EditText-->
+<!--            android:id="@+id/etMail"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:ems="10"-->
+<!--            android:inputType="textEmailAddress" />-->
+<!--        <TextView-->
+<!--            android:id="@+id/textViewSenha"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="e-mail" />-->
+<!--        <EditText-->
+<!--            android:id="@+id/etSenha"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:ems="10"-->
+<!--        android:inputType="textPassword" />-->
+<!--        <TextView-->
+<!--            android:id="@+id/textViewPerfil"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Perfil" />-->
+<!--        <RadioGroup-->
+<!--            android:id="@+id/rgPerfil"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent" >-->
+<!--            <TableLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="match_parent">-->
+<!--                <TableRow-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="match_parent" >-->
+<!--                    <RadioButton-->
+<!--                        android:id="@+id/radioButtonIni"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Iniciante" />-->
+<!--                    <RadioButton-->
+<!--                        android:id="@+id/radioButtonInt"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Intermediário" />-->
+<!--                    <RadioButton-->
+<!--                        android:id="@+id/radioButtonAvn"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="Avançado" />-->
+<!--                </TableRow>-->
+<!--            </TableLayout>-->
+<!--        </RadioGroup>-->
+<!--        <TextView-->
+<!--            android:id="@+id/textViewSexo"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Sexo" />-->
+<!--        <Spinner-->
+
+<!--        android:id="@+id/spSexo"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:entries="@array/opcoes_sexo" />-->
+<!--        <TextView-->
+<!--            android:id="@+id/textViewNasc"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Data Nascimento" />-->
+<!--        <CalendarView-->
+<!--            android:id="@+id/cvDataNasc"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content" />-->
+<!--        <CheckBox-->
+<!--            android:id="@+id/cbAceite"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="Aceito os termos ...." />-->
+        <Button
+            android:id="@+id/btSalvar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/create_button_text" />
+
+    </LinearLayout>
+</ScrollView>

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    //id("org.openapi.generator")
 }
 
 android {
@@ -39,7 +40,28 @@ android {
     buildFeatures {
         compose = true
     }
+
+    /*// Point the generated classes
+    sourceSets {
+        getByName("main") {
+            java.srcDirs("$projectDir/build/src/main/kotlin")
+        }
+    }*/
 }
+/*
+openApiGenerate {
+    generatorName = "kotlin"
+    inputSpec = "$rootDir/app/src/main/api/openapi.json" // Path to your OpenAPI spec file
+    outputDir = "$projectDir/build"           // Directory to store generated code
+    packageName = "br.com.andreg.mobile.vortex"       // Replace with your desired package name
+    configOptions.put("serializableModel","false")
+    configOptions.put("serializationLibrary","gson")
+    generateApiTests.set(false)
+    generateApiDocumentation.set(false)
+
+    // LINHA ADICIONAL PARA IGNORAR ERROS:
+    validateSpec.set(false)
+}*/
 
 dependencies {
     implementation(libs.androidx.core.ktx)
@@ -51,6 +73,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
+    implementation(libs.play.services.cast.framework)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -58,4 +81,17 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    
+    // Fuel e Gson
+    implementation("com.github.kittinunf.fuel:fuel:2.3.1")
+    implementation("com.github.kittinunf.fuel:fuel-coroutines:2.3.1")
+    implementation("com.github.kittinunf.fuel:fuel-gson:2.3.1")
+    implementation("com.google.code.gson:gson:2.10.1") // Versão mais recente do Gson
+    implementation("com.github.kittinunf.fuel:fuel-android:2.3.1")
 }
+/*
+// Invoca o openApiGenerator para ser executado ANTES da compilação do Kotlin
+afterEvaluate {
+    tasks.findByName("compileDebugKotlin")?.dependsOn("openApiGenerate")
+    tasks.findByName("compileReleaseKotlin")?.dependsOn("openApiGenerate")
+}*/

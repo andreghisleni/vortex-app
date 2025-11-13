@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Vortex</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="create_event_title">Cadastrar evento</string>
+    <string name="event_name">Nome do evento</string>
+    <string name="create_button_text">Cadastrar</string>
+    <string name="nome_do_evento">Nome do evento</string>
 </resources>
