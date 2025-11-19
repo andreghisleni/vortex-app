@@ -2,14 +2,18 @@ package br.com.andreg.mobile.vortex.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import br.com.andreg.mobile.vortex.auth.SessionManager
 import br.com.andreg.mobile.vortex.model.Event
@@ -40,27 +45,26 @@ fun EventSelectionScreen(
     val eventService = remember { EventService() }
     val scope = rememberCoroutineScope()
 
-    LaunchedEffect(Unit) {
-        try {
-            Log.d("EventSelectionScreen", "Buscando eventos...")
-            scope.launch {
-                try {
-                    events = eventService.getEvents()
-
-                    Log.d("EventSelectionScreen", "Eventos encontrados: ${events.size}")
-                } catch (e: Exception) {
-                    Log.e("AuthScreen", "Falha no login: ${e.message}")
-                    errorMessage = e.message ?: "Ocorreu um erro desconhecido."
-                } finally {
-                    isLoading = false
-                }
+    // Função para buscar os eventos
+    fun fetchEvents() {
+        scope.launch {
+            isLoading = true
+            errorMessage = null
+            try {
+                Log.d("EventSelectionScreen", "Buscando eventos...")
+                events = eventService.getEvents()
+            } catch (e: Exception) {
+                Log.e("EventSelectionScreen", "Falha ao buscar eventos", e)
+                errorMessage = e.message
+            } finally {
+                isLoading = false
             }
-        } catch (e: Exception) {
-            Log.e("EventSelectionScreen", "Falha ao buscar eventos", e)
-            errorMessage = e.message
-        } finally {
-            isLoading = false
         }
+    }
+
+    // Busca inicial na primeira vez que a tela é carregada
+    LaunchedEffect(Unit) {
+        fetchEvents()
     }
 
     Box(
@@ -72,11 +76,22 @@ fun EventSelectionScreen(
                 CircularProgressIndicator()
             }
             errorMessage != null -> {
-                Text(
-                    text = "Erro: $errorMessage",
-                    color = MaterialTheme.colorScheme.error,
+                // UI de Erro com botão para tentar novamente
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                     modifier = Modifier.padding(16.dp)
-                )
+                ) {
+                    Text(
+                        text = "Erro ao carregar eventos: $errorMessage",
+                        color = MaterialTheme.colorScheme.error,
+                        textAlign = TextAlign.Center
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Button(onClick = { fetchEvents() }) {
+                        Text("Tentar Novamente")
+                    }
+                }
             }
             else -> {
                 LazyColumn(
@@ -92,9 +107,12 @@ fun EventSelectionScreen(
                     }
                     items(events) { event ->
                         EventItem(event = event) {
-                            Log.d("EventSelectionScreen", "Evento selecionado: ${event.name}")
-                            SessionManager.eventId = event.id.toString()
-                            onEventSelected()
+                            scope.launch {
+                                val eventId = event.id.toString()
+                                Log.d("EventSelectionScreen", "Salvando Evento ID: $eventId")
+                                SessionManager.saveEventId(eventId)
+                                onEventSelected()
+                            }
                         }
                         Divider()
                     }
@@ -113,8 +131,6 @@ fun EventItem(event: Event, onClick: () -> Unit) {
             .padding(vertical = 16.dp)
     ) {
         Text(text = event.name, style = MaterialTheme.typography.titleMedium)
-        if(event.description!=null){
-            Text(text = event.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-        }
+        Text(text = event.description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
     }
 }

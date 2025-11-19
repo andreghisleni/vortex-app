@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -62,7 +64,7 @@ fun AuthScreen(
 
         errorMessage?.let {
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = it, color = androidx.compose.material3.MaterialTheme.colorScheme.error)
+            Text(text = it, color = MaterialTheme.colorScheme.error)
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -75,7 +77,9 @@ fun AuthScreen(
                     try {
                         Log.d("AuthScreen", "Tentando fazer login com o e-mail: $email")
                         val response = authService.login(email, password)
-                        SessionManager.authToken = response.token
+
+                        // A tela só precisa chamar o SessionManager.
+                        SessionManager.saveAuthToken(response.token)
                         Log.d("AuthScreen", "Login bem-sucedido! Token salvo.")
                         onAuthComplete()
                     } catch (e: Exception) {
@@ -89,7 +93,7 @@ fun AuthScreen(
             enabled = !isLoading
         ) {
             if (isLoading) {
-                androidx.compose.material3.CircularProgressIndicator(modifier = Modifier.height(24.dp))
+                CircularProgressIndicator(modifier = Modifier.height(24.dp))
             } else {
                 Text("Entrar")
             }

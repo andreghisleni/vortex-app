@@ -86,8 +86,11 @@ dependencies {
     implementation("com.github.kittinunf.fuel:fuel:2.3.1")
     implementation("com.github.kittinunf.fuel:fuel-coroutines:2.3.1")
     implementation("com.github.kittinunf.fuel:fuel-gson:2.3.1")
-    implementation("com.google.code.gson:gson:2.10.1") // Versão mais recente do Gson
+    implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.github.kittinunf.fuel:fuel-android:2.3.1")
+
+    // Jetpack DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 }
 /*
 // Invoca o openApiGenerator para ser executado ANTES da compilação do Kotlin

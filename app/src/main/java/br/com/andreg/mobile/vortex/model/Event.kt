@@ -7,7 +7,7 @@ import java.util.UUID
 data class Event(
     var id: UUID,
     var name: String = "",
-    var description: String,
+    var description: String = " ",
     var ticketType: String = "",
     var ownerId: UUID,
     var autoGenerateTicketsTotalPerMember: Int,

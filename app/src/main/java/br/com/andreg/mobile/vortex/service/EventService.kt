@@ -8,7 +8,6 @@ import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.Headers
 import com.github.kittinunf.fuel.core.ResponseDeserializable
 import com.github.kittinunf.fuel.coroutines.awaitObjectResult
-import com.github.kittinunf.fuel.gson.gsonDeserializerOf
 import com.github.kittinunf.result.Result
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
@@ -22,10 +21,12 @@ class EventService {
     suspend fun getEvents(): List<Event> {
         val token = SessionManager.authToken ?: throw Exception("Token de autenticação não encontrado.")
 
-        Log.d("EventService", token)
+        Log.d("EventService", "Enviando token como cookie: $token")
 
         val result = Fuel.get(eventsUrl)
-            .awaitObjectResult(object: ResponseDeserializable<List<Event>> {
+            // CORREÇÃO: Enviando o token como um Cookie em vez de um Header de Autorização.
+            .header(Headers.COOKIE, "token=$token")
+            .awaitObjectResult(object : ResponseDeserializable<List<Event>> {
                 override fun deserialize(reader: Reader): List<Event> {
                     val listType = object : TypeToken<List<Event>>() {}.type
                     return gson.fromJson(reader, listType)
@@ -35,8 +36,11 @@ class EventService {
         return when (result) {
             is Result.Success -> {
                 Log.d("EventService", "Eventos recebidos: ${result.value.size}")
-                Log.d("EventService", result.value.toString())
-                result.value
+                val events = result.value.map { event ->
+                    event.copy(description = event.description ?: " ")
+                }
+                Log.d("EventService", events.toString())
+                events
             }
             is Result.Failure -> {
                 val error = result.error
