@@ -25,7 +25,7 @@ class EventService {
 
         val result = Fuel.get(eventsUrl)
             // CORREÇÃO: Enviando o token como um Cookie em vez de um Header de Autorização.
-            .header(Headers.COOKIE, "token=$token")
+            .header(Headers.COOKIE, "__Secure-better-auth.session_token=$token")
             .awaitObjectResult(object : ResponseDeserializable<List<Event>> {
                 override fun deserialize(reader: Reader): List<Event> {
                     val listType = object : TypeToken<List<Event>>() {}.type

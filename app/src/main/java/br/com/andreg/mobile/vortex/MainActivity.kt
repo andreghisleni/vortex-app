@@ -19,6 +19,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -33,6 +34,7 @@ import br.com.andreg.mobile.vortex.ui.screens.HomeScreen
 import br.com.andreg.mobile.vortex.ui.screens.ProfileScreen
 import br.com.andreg.mobile.vortex.ui.screens.SplashScreen
 import br.com.andreg.mobile.vortex.ui.theme.VortexTheme
+import kotlinx.coroutines.launch
 
 enum class AppState {
     LOADING,
@@ -57,13 +59,10 @@ class MainActivity : ComponentActivity() {
 fun MainApp() {
     val context = LocalContext.current
     var appState by remember { mutableStateOf(AppState.LOADING) }
+    val scope = rememberCoroutineScope()
 
-    // Este LaunchedEffect só executa uma vez, na inicialização.
     LaunchedEffect(Unit) {
-        // Inicializa o SessionManager com a persistência.
         SessionManager.initialize(UserPreferencesRepository(context))
-
-        // Carrega os dados e decide a rota inicial.
         val hasFullSession = SessionManager.loadSessionData()
         if (hasFullSession) {
             appState = AppState.MAIN_APP
@@ -89,14 +88,25 @@ fun MainApp() {
             )
         }
         AppState.MAIN_APP -> {
-            VortexApp()
+            VortexApp(
+                onSwitchEvent = { appState = AppState.EVENT_SELECTION },
+                onLogout = {
+                    scope.launch {
+                        SessionManager.logout()
+                        appState = AppState.AUTHENTICATING
+                    }
+                }
+            )
         }
     }
 }
 
 @PreviewScreenSizes
 @Composable
-fun VortexApp() {
+fun VortexApp(
+    onSwitchEvent: () -> Unit,
+    onLogout: () -> Unit
+) {
     var currentDestination by remember { mutableStateOf(AppDestinations.HOME) }
 
     NavigationSuiteScaffold(
@@ -121,7 +131,11 @@ fun VortexApp() {
             when (currentDestination) {
                 AppDestinations.HOME -> HomeScreen(modifier = Modifier.padding(innerPadding))
                 AppDestinations.FAVORITES -> FavoritesScreen(modifier = Modifier.padding(innerPadding))
-                AppDestinations.PROFILE -> ProfileScreen(modifier = Modifier.padding(innerPadding))
+                AppDestinations.PROFILE -> ProfileScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    onSwitchEvent = onSwitchEvent,
+                    onLogout = onLogout
+                )
             }
         }
     }

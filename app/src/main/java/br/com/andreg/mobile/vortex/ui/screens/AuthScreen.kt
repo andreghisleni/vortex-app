@@ -9,9 +9,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,9 +26,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import br.com.andreg.mobile.vortex.auth.AuthService
-import br.com.andreg.mobile.vortex.auth.SessionManager
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AuthScreen(
     modifier: Modifier = Modifier,
@@ -38,64 +41,67 @@ fun AuthScreen(
     val scope = rememberCoroutineScope()
     val authService = remember { AuthService() }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("E-mail") },
-            enabled = !isLoading
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Senha") },
-            visualTransformation = PasswordVisualTransformation(),
-            enabled = !isLoading
-        )
-
-        errorMessage?.let {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = it, color = MaterialTheme.colorScheme.error)
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Button(
-            onClick = {
-                scope.launch {
-                    isLoading = true
-                    errorMessage = null
-                    try {
-                        Log.d("AuthScreen", "Tentando fazer login com o e-mail: $email")
-                        val response = authService.login(email, password)
-
-                        // A tela só precisa chamar o SessionManager.
-                        SessionManager.saveAuthToken(response.token)
-                        Log.d("AuthScreen", "Login bem-sucedido! Token salvo.")
-                        onAuthComplete()
-                    } catch (e: Exception) {
-                        Log.e("AuthScreen", "Falha no login: ${e.message}")
-                        errorMessage = e.message ?: "Ocorreu um erro desconhecido."
-                    } finally {
-                        isLoading = false
-                    }
-                }
-            },
-            enabled = !isLoading
+    Scaffold(
+        modifier = modifier,
+        topBar = { TopAppBar(title = { Text("Login") }) }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding) // Aplica o padding para não ficar sob a barra
+                .padding(16.dp),      // Padding adicional para o formulário
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (isLoading) {
-                CircularProgressIndicator(modifier = Modifier.height(24.dp))
-            } else {
-                Text("Entrar")
+            OutlinedTextField(
+                value = email,
+                onValueChange = { email = it },
+                label = { Text("E-mail") },
+                enabled = !isLoading
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text("Senha") },
+                visualTransformation = PasswordVisualTransformation(),
+                enabled = !isLoading
+            )
+
+            errorMessage?.let {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(text = it, color = MaterialTheme.colorScheme.error)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    scope.launch {
+                        isLoading = true
+                        errorMessage = null
+                        try {
+                            // O AuthService agora salva o token internamente a partir do cookie
+                            authService.login(email, password)
+                            Log.d("AuthScreen", "Login bem-sucedido! O AuthService cuidou de salvar o token.")
+                            onAuthComplete()
+                        } catch (e: Exception) {
+                            Log.e("AuthScreen", "Falha no login: ${e.message}")
+                            errorMessage = e.message ?: "Ocorreu um erro desconhecido."
+                        } finally {
+                            isLoading = false
+                        }
+                    }
+                },
+                enabled = !isLoading
+            ) {
+                if (isLoading) {
+                    CircularProgressIndicator(modifier = Modifier.height(24.dp))
+                } else {
+                    Text("Entrar")
+                }
             }
         }
     }

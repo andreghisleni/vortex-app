@@ -16,8 +16,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,6 +37,7 @@ import br.com.andreg.mobile.vortex.model.Event
 import br.com.andreg.mobile.vortex.service.EventService
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EventSelectionScreen(
     modifier: Modifier = Modifier,
@@ -45,7 +49,6 @@ fun EventSelectionScreen(
     val eventService = remember { EventService() }
     val scope = rememberCoroutineScope()
 
-    // Função para buscar os eventos
     fun fetchEvents() {
         scope.launch {
             isLoading = true
@@ -62,59 +65,58 @@ fun EventSelectionScreen(
         }
     }
 
-    // Busca inicial na primeira vez que a tela é carregada
     LaunchedEffect(Unit) {
         fetchEvents()
     }
 
-    Box(
-        modifier = modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        when {
-            isLoading -> {
-                CircularProgressIndicator()
-            }
-            errorMessage != null -> {
-                // UI de Erro com botão para tentar novamente
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(16.dp)
-                ) {
-                    Text(
-                        text = "Erro ao carregar eventos: $errorMessage",
-                        color = MaterialTheme.colorScheme.error,
-                        textAlign = TextAlign.Center
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Button(onClick = { fetchEvents() }) {
-                        Text("Tentar Novamente")
+    Scaffold(
+        topBar = {
+            TopAppBar(title = { Text("Selecione um Evento") })
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(innerPadding), // Aplica o padding para não ficar sob a barra
+            contentAlignment = Alignment.Center
+        ) {
+            when {
+                isLoading -> {
+                    CircularProgressIndicator()
+                }
+                errorMessage != null -> {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        Text(
+                            text = "Erro ao carregar eventos: $errorMessage",
+                            color = MaterialTheme.colorScheme.error,
+                            textAlign = TextAlign.Center
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = { fetchEvents() }) {
+                            Text("Tentar Novamente")
+                        }
                     }
                 }
-            }
-            else -> {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
-                    item {
-                        Text(
-                            text = "Selecione um Evento",
-                            style = MaterialTheme.typography.headlineMedium,
-                            modifier = Modifier.padding(bottom = 16.dp)
-                        )
-                    }
-                    items(events) { event ->
-                        EventItem(event = event) {
-                            scope.launch {
-                                val eventId = event.id.toString()
-                                Log.d("EventSelectionScreen", "Salvando Evento ID: $eventId")
-                                SessionManager.saveEventId(eventId)
-                                onEventSelected()
+                else -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(horizontal = 16.dp) // Apenas espaçamento lateral
+                    ) {
+                        items(events) { event ->
+                            EventItem(event = event) {
+                                scope.launch {
+                                    val eventId = event.id.toString()
+                                    Log.d("EventSelectionScreen", "Salvando Evento ID: $eventId")
+                                    SessionManager.saveEventId(eventId)
+                                    onEventSelected()
+                                }
                             }
+                            Divider()
                         }
-                        Divider()
                     }
                 }
             }
