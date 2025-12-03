@@ -1,0 +1,128 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp"
+            tools:context=".ui.member.MemberFormFragment">
+
+        <!-- TODO: Update blank fragment layout -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/hello_blank_fragment"
+            android:textSize="24sp"
+            android:textColor="@color/white"
+            />
+
+        <EditText
+            android:id="@+id/editTextText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="text"
+            android:text="Name"
+            android:autofillHints="name"
+            android:textColor="@color/white"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/hello_blank_fragment"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        />
+
+
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Button" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/hello_blank_fragment"
+        android:textSize="24sp"
+        android:textColor="@color/white"
+        />
+
+            <TextView
+                android:id="@+id/textViewNm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_nome" />
+
+            <EditText
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:labelFor="@+id/textViewNm"
+                />
+
+            <TextView
+                android:id="@+id/textViewVision"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_vision_id" />
+
+            <EditText
+                android:id="@+id/etVisionId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"
+                android:labelFor="@+id/textViewVision"
+                />
+
+            <TextView
+                android:id="@+id/textViewRegister"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_register" />
+
+            <EditText
+                android:id="@+id/etRegister"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"
+                android:labelFor="@+id/textViewRegister"
+                />
+
+            <TextView
+                android:id="@+id/textViewSession"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/label_session" />
+
+            <Spinner
+                android:id="@+id/spSession"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:minHeight="48dp" />
+
+            <Button
+                android:id="@+id/btSalvar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/botao_salvar" />
+    </LinearLayout>
+    </ScrollView>
+</FrameLayout>

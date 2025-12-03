@@ -19,6 +19,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Define a URL base para todos os builds
+        buildConfigField("String", "BASE_URL", "\"https://api.vortex-dev.andreg.com.br\"")
     }
 
     buildTypes {
@@ -39,6 +42,8 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
+        buildConfig = true // Habilita o buildConfig
     }
 
     /*// Point the generated classes
@@ -74,6 +79,8 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material3.adaptive.navigation.suite)
     implementation(libs.play.services.cast.framework)
+    implementation(libs.androidx.legacy.support.v4)
+    implementation(libs.androidx.recyclerview)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -81,6 +88,7 @@ dependencies {
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+    implementation("androidx.fragment:fragment-compose:1.7.1")
     
     // Fuel e Gson
     implementation("com.github.kittinunf.fuel:fuel:2.3.1")
@@ -88,9 +96,18 @@ dependencies {
     implementation("com.github.kittinunf.fuel:fuel-gson:2.3.1")
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.github.kittinunf.fuel:fuel-android:2.3.1")
+    implementation("com.android.volley:volley:1.2.1")
 
     // Jetpack DataStore
     implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
+
+    // Adicione esta linha para habilitar temas e componentes XML modernos
+    implementation("com.google.android.material:material:1.12.0")
+
+    // Certifique-se também de ter o appcompat (geralmente já vem, mas garanta)
+    implementation("androidx.appcompat:appcompat:1.7.0")
 }
 /*
 // Invoca o openApiGenerator para ser executado ANTES da compilação do Kotlin

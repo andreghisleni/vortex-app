@@ -2,4 +2,11 @@
 <resources>
 
     <style name="Theme.Vortex" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.Vortex.Xml.Bridge" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">#6200EE</item>
+        <item name="colorPrimaryVariant">#3700B3</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="android:windowBackground">?android:attr/colorBackground</item>
+    </style>
 </resources>

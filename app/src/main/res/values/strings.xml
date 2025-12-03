@@ -5,4 +5,20 @@
     <string name="event_name">Nome do evento</string>
     <string name="create_button_text">Cadastrar</string>
     <string name="nome_do_evento">Nome do evento</string>
+
+    <string name="label_nome">Nome</string>
+    <string name="label_vision_id">Vision ID (Opcional)</string>
+    <string name="label_register">Registro (Opcional)</string>
+    <string name="label_session">Seção</string>
+
+    <string name="botao_salvar">Salvar</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="perfis">
+        <item>Administrativo</item>
+        <item>Contabilidade</item>
+        <item>Expedição</item>
+        <item>Vendas</item>
+    </string-array>
 </resources>

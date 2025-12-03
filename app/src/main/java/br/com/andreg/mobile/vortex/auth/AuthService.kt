@@ -1,6 +1,7 @@
 package br.com.andreg.mobile.vortex.auth
 
 import android.util.Log
+import br.com.andreg.mobile.vortex.BuildConfig
 import com.github.kittinunf.fuel.Fuel
 import com.github.kittinunf.fuel.core.Headers
 import com.github.kittinunf.fuel.coroutines.awaitResponseResult
@@ -12,7 +13,7 @@ import java.net.URLDecoder
 class AuthService {
 
     private val gson = Gson()
-    private val loginUrl = "https://api.vortex.andreg.com.br/auth/api/sign-in/email"
+    private val loginUrl = BuildConfig.BASE_URL + "/auth/api/sign-in/email"
 
     suspend fun login(email: String, password: String): SignInResponse {
         val requestBody = SignInEmailRequest(

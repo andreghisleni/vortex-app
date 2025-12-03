@@ -1,15 +1,16 @@
 package br.com.andreg.mobile.vortex
 
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -25,8 +26,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import androidx.fragment.app.FragmentActivity
 import br.com.andreg.mobile.vortex.auth.SessionManager
 import br.com.andreg.mobile.vortex.data.preferences.UserPreferencesRepository
+import br.com.andreg.mobile.vortex.ui.member.GetMembersScreen
+import br.com.andreg.mobile.vortex.ui.member.MemberFormScreen
 import br.com.andreg.mobile.vortex.ui.screens.AuthScreen
 import br.com.andreg.mobile.vortex.ui.screens.EventSelectionScreen
 import br.com.andreg.mobile.vortex.ui.screens.FavoritesScreen
@@ -43,7 +47,7 @@ enum class AppState {
     MAIN_APP
 }
 
-class MainActivity : ComponentActivity() {
+class MainActivity : FragmentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -111,13 +115,10 @@ fun VortexApp(
 
     NavigationSuiteScaffold(
         navigationSuiteItems = {
-            AppDestinations.entries.forEach {
+            AppDestinations.entries.filter { !it.isJavaDestination }.forEach {
                 item(
                     icon = {
-                        Icon(
-                            it.icon,
-                            contentDescription = it.label
-                        )
+                        Icon(it.icon, contentDescription = it.label)
                     },
                     label = { Text(it.label) },
                     selected = it == currentDestination,
@@ -126,16 +127,33 @@ fun VortexApp(
             }
         }
     ) {
-        Scaffold {
-            innerPadding ->
+        Scaffold { innerPadding ->
             when (currentDestination) {
-                AppDestinations.HOME -> HomeScreen(modifier = Modifier.padding(innerPadding))
+                AppDestinations.HOME -> HomeScreen(
+                    modifier = Modifier.padding(innerPadding),
+                    onNavigateToJava = {
+                        currentDestination = AppDestinations.MEMBER_FORM
+                    }
+                )
                 AppDestinations.FAVORITES -> FavoritesScreen(modifier = Modifier.padding(innerPadding))
                 AppDestinations.PROFILE -> ProfileScreen(
                     modifier = Modifier.padding(innerPadding),
                     onSwitchEvent = onSwitchEvent,
                     onLogout = onLogout
                 )
+                AppDestinations.MEMBER_FORM -> {
+                    MemberFormScreen(
+                        eventId = SessionManager.eventId!!, // eventId is guaranteed to be non-null here
+                        memberJson = null,
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
+                AppDestinations.GET_MEMBERS -> {
+                    GetMembersScreen(
+                        eventId = SessionManager.eventId!!, // eventId is guaranteed to be non-null here
+                        modifier = Modifier.padding(innerPadding)
+                    )
+                }
             }
         }
     }
@@ -144,8 +162,11 @@ fun VortexApp(
 enum class AppDestinations(
     val label: String,
     val icon: ImageVector,
+    val isJavaDestination: Boolean = false
 ) {
     HOME("Home", Icons.Default.Home),
     FAVORITES("Favorites", Icons.Default.Favorite),
     PROFILE("Profile", Icons.Default.AccountBox),
+    MEMBER_FORM("", Icons.Default.Add, isJavaDestination = true),
+    GET_MEMBERS("Members", Icons.Default.List)
 }

@@ -1,6 +1,7 @@
 package br.com.andreg.mobile.vortex.service
 
 import android.util.Log
+import br.com.andreg.mobile.vortex.BuildConfig
 import br.com.andreg.mobile.vortex.auth.ErrorResponse
 import br.com.andreg.mobile.vortex.auth.SessionManager
 import br.com.andreg.mobile.vortex.model.Event
@@ -16,7 +17,7 @@ import java.io.Reader
 class EventService {
 
     private val gson = Gson()
-    private val eventsUrl = "https://api.vortex.andreg.com.br/events"
+    private val eventsUrl = BuildConfig.BASE_URL + "/events"
 
     suspend fun getEvents(): List<Event> {
         val token = SessionManager.authToken ?: throw Exception("Token de autenticação não encontrado.")
