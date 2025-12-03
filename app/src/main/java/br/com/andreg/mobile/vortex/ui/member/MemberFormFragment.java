@@ -158,9 +158,8 @@ public class MemberFormFragment extends Fragment {
             requestBody.put("visionId", etVisionId.getText().toString().trim());
             requestBody.put("register", etRegister.getText().toString().trim());
 
-            JSONObject sessionObject = new JSONObject();
-            sessionObject.put("id", selectedSession.getId());
-            requestBody.put("session", sessionObject);
+
+            requestBody.put("sessionId", selectedSession.getId());
 
         } catch (JSONException e) {
             e.printStackTrace();
@@ -176,6 +175,9 @@ public class MemberFormFragment extends Fragment {
             url += "/" + memberToEdit.getId();
         }
 
+        Log.d("MemberForm", "requestBody"+ requestBody);
+
+
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(method, url, requestBody,
                 response -> {
                     Toast.makeText(getContext(), "Salvo com sucesso!", Toast.LENGTH_SHORT).show();
@@ -188,6 +190,7 @@ public class MemberFormFragment extends Fragment {
                     }
                     Toast.makeText(getContext(), erro, Toast.LENGTH_LONG).show();
                     Log.e("MemberForm", "Erro API", error);
+                    Log.e("MemberForm", "Erro API" + error.networkResponse);
                 }
         ) {
             @Override

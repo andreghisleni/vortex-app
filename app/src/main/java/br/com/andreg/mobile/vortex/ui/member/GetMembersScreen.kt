@@ -32,17 +32,8 @@ fun GetMembersScreen(
     AndroidView(
         modifier = modifier,
         factory = { ctx ->
-            // --- A MÁGICA ESTÁ AQUI ---
-            // Envolvemos o contexto em um Tema XML robusto (MaterialComponents ou AppCompat)
-            // Isso garante que o Fragmento encontre todas as cores e estilos que precisa.
-            val contextThemeWrapper = ContextThemeWrapper(
-                ctx,
-                br.com.andreg.mobile.vortex.R.style.Theme_Vortex_Xml_Bridge
-                // Se não tiver criado o tema abaixo, use temporariamente:
-                // androidx.appcompat.R.style.Theme_AppCompat_Light_NoActionBar
-            )
-
-            FragmentContainerView(contextThemeWrapper).apply {
+            // O Fragment agora herda o tema do contexto do Compose
+            FragmentContainerView(ctx).apply {
                 id = viewId
                 layoutParams = FrameLayout.LayoutParams(
                     FrameLayout.LayoutParams.MATCH_PARENT,

@@ -12,17 +12,30 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+
+import java.util.ArrayList;
+
 import br.com.andreg.mobile.vortex.R;
+import br.com.andreg.mobile.vortex.model.Member;
 
 /**
  * A fragment representing a list of Items.
  */
-public class GetMembersFragment extends Fragment {
+public class GetMembersFragment extends Fragment implements Response.ErrorListener, Response.Listener {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+
+    private ArrayList<Member> members;
+    private RequestQueue requestQueue;
+    private JsonArrayRequest jsonArrayReq;
+    private View view;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -53,19 +66,19 @@ public class GetMembersFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_get_members_list, container, false);
+        view = inflater.inflate(R.layout.fragment_get_members_list, container, false);
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-//            recyclerView.setAdapter(new MemberRecyclerViewAdapter(PlaceholderContent.ITEMS));
-        }
+
         return view;
+    }
+
+    @Override
+    public void onErrorResponse(VolleyError volleyError) {
+
+    }
+
+    @Override
+    public void onResponse(Object o) {
+
     }
 }
