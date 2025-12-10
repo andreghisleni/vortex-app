@@ -15,8 +15,12 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import com.android.volley.NetworkResponse;
+import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
@@ -26,6 +30,7 @@ import com.google.gson.reflect.TypeToken;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.net.HttpURLConnection;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -95,7 +100,6 @@ public class MemberFormFragment extends Fragment {
         etRegister.setText(member.getRegister());
     }
 
-    // --- MUDANÇA 1: Requisição GET de Sessões ---
     private void fetchSessions() {
         String sessionsUrl = BuildConfig.BASE_URL + "/scout-sessions/";
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, sessionsUrl, null,
@@ -124,11 +128,9 @@ public class MemberFormFragment extends Fragment {
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
-                // Recupera o token do SessionManager (Kotlin Object)
                 String token = SessionManager.INSTANCE.getAuthToken();
 
                 if (token != null) {
-                    // ALTERADO: Envia como Cookie formatado para o Better Auth
                     headers.put("Cookie", "__Secure-better-auth.session_token=" + token);
                     Log.d("MemberForm", "Enviando Cookie GET: " + token);
                 }
@@ -138,7 +140,6 @@ public class MemberFormFragment extends Fragment {
         requestQueue.add(jsonArrayRequest);
     }
 
-    // --- MUDANÇA 2: Requisição POST/PUT de Salvar ---
     private void onSubmit() {
         String name = etName.getText().toString().trim();
         if (name.isEmpty()) {
@@ -157,10 +158,7 @@ public class MemberFormFragment extends Fragment {
             requestBody.put("name", name);
             requestBody.put("visionId", etVisionId.getText().toString().trim());
             requestBody.put("register", etRegister.getText().toString().trim());
-
-
             requestBody.put("sessionId", selectedSession.getId());
-
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -175,36 +173,73 @@ public class MemberFormFragment extends Fragment {
             url += "/" + memberToEdit.getId();
         }
 
-        Log.d("MemberForm", "requestBody"+ requestBody);
-
-
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(method, url, requestBody,
                 response -> {
                     Toast.makeText(getContext(), "Salvo com sucesso!", Toast.LENGTH_SHORT).show();
-                    requireActivity().getOnBackPressedDispatcher().onBackPressed();
+
+                    // Verifica se o listener foi configurado (conforme conversamos na pergunta anterior)
+                    // Se não tiver listener, usa o back normal
+//                    if (requireActivity() instanceof MemberFormFragment.OnMemberActionListener) {
+//                        // Se você implementou a interface na Activity
+//                    } else {
+//                        requireActivity().getOnBackPressedDispatcher().onBackPressed();
+//                    }
+
+//                    requireActivity().getOnBackPressedDispatcher().onBackPressed();
                 },
                 error -> {
                     String erro = "Erro ao salvar";
+
                     if (error.networkResponse != null && error.networkResponse.data != null) {
+
                         erro += ": " + new String(error.networkResponse.data, StandardCharsets.UTF_8);
+
                     }
+
                     Toast.makeText(getContext(), erro, Toast.LENGTH_LONG).show();
+
                     Log.e("MemberForm", "Erro API", error);
+
                     Log.e("MemberForm", "Erro API" + error.networkResponse);
                 }
         ) {
+            // --- CORREÇÃO AQUI ---
+            @Override
+            protected Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
+                try {
+                    // Se o status for 201 ou 200 e não tiver dados, retornamos um JSON vazio fake
+                    // para enganar o Volley e ele chamar o "onResponse" (sucesso)
+                    if (response.data.length == 0) {
+                        return Response.success(new JSONObject(), HttpHeaderParser.parseCacheHeaders(response));
+                    }
+
+                    // Se tiver dados, tenta fazer o parse padrão
+                    String jsonString = new String(response.data, HttpHeaderParser.parseCharset(response.headers, PROTOCOL_CHARSET));
+
+                    // Se a string for vazia ou null, retorna JSON vazio
+                    if (jsonString == null || jsonString.trim().isEmpty()) {
+                        return Response.success(new JSONObject(), HttpHeaderParser.parseCacheHeaders(response));
+                    }
+
+                    return Response.success(new JSONObject(jsonString), HttpHeaderParser.parseCacheHeaders(response));
+
+                } catch (Exception e) {
+                    // Se der erro de parse, mas o status for de sucesso (200 ou 201),
+                    // consideramos sucesso mesmo assim.
+                    if (response.statusCode == 201 || response.statusCode == 200) {
+                        return Response.success(new JSONObject(), HttpHeaderParser.parseCacheHeaders(response));
+                    }
+                    return Response.error(new ParseError(e));
+                }
+            }
+
             @Override
             public Map<String, String> getHeaders() {
                 Map<String, String> headers = new HashMap<>();
                 headers.put("Content-Type", "application/json");
-
-                // Recupera o token
                 String token = SessionManager.INSTANCE.getAuthToken();
-
                 if (token != null) {
-                    // ALTERADO: Envia como Cookie formatado para o Better Auth
                     headers.put("Cookie", "__Secure-better-auth.session_token=" + token);
-                    Log.d("MemberForm", "Enviando Cookie POST/PUT: " + token);
                 }
                 return headers;
             }

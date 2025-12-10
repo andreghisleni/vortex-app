@@ -15,7 +15,6 @@ import androidx.fragment.app.commit
 import br.com.andreg.mobile.vortex.ui.member.MemberFormFragment
 
 import br.com.andreg.mobile.vortex.ui.BlankFragment
-import androidx.appcompat.R as AppCompatR // Alias para não confundir resources
 
 @Composable
 fun MemberFormScreen(

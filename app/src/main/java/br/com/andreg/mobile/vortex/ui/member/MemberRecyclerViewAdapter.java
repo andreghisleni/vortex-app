@@ -34,8 +34,8 @@ public class MemberRecyclerViewAdapter extends RecyclerView.Adapter<MemberRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getName());
-        holder.mContentView.setText(mValues.get(position).getRegister());
+        holder.mIdView.setText(mValues.get(position).getRegister().length() < 2 ?"------------": mValues.get(position).getRegister());
+        holder.mContentView.setText(mValues.get(position).getName());
     }
 
     @Override

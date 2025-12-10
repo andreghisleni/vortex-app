@@ -2,6 +2,7 @@ package br.com.andreg.mobile.vortex.ui.member
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import androidx.compose.runtime.Composable
@@ -17,12 +18,12 @@ import br.com.andreg.mobile.vortex.ui.member.MemberFormFragment
 
 import android.view.ContextThemeWrapper
 import br.com.andreg.mobile.vortex.ui.BlankFragment
-import androidx.appcompat.R as AppCompatR // Alias para não confundir resources
 
 @Composable
 fun GetMembersScreen(
     eventId: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToMemberForm: () -> Unit = {}
 ) {
     val context = LocalContext.current
     // Precisamos de um ID único para o container do fragmento,
@@ -46,7 +47,7 @@ fun GetMembersScreen(
             fragmentActivity?.let { activity ->
                 // Verifica se o fragmento já foi adicionado para evitar duplicação
                 val fragmentManager = activity.supportFragmentManager
-                val existingFragment = fragmentManager.findFragmentById(view.id)
+                val existingFragment = fragmentManager.findFragmentById(view.id) as? GetMembersFragment
 
                 if (existingFragment == null) {
                     val fragment = GetMembersFragment()
@@ -61,6 +62,15 @@ fun GetMembersScreen(
                         replace(view.id, fragment)
                         setReorderingAllowed(true)
                     }
+                    fragment.setOnMemberActionListener {
+                        Log.d("GetMembersScreen", "FloatingActionButton clicked here 2")
+                        onNavigateToMemberForm()
+                    }
+                }
+
+                existingFragment?.setOnMemberActionListener {
+                    Log.d("GetMembersScreen", "FloatingActionButton clicked here")
+                    onNavigateToMemberForm()
                 }
             }
         }

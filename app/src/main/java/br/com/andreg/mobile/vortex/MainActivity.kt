@@ -151,7 +151,10 @@ fun VortexApp(
                 AppDestinations.GET_MEMBERS -> {
                     GetMembersScreen(
                         eventId = SessionManager.eventId!!, // eventId is guaranteed to be non-null here
-                        modifier = Modifier.padding(innerPadding)
+                        modifier = Modifier.padding(innerPadding),
+                        onNavigateToMemberForm = {
+                            currentDestination = AppDestinations.MEMBER_FORM
+                        }
                     )
                 }
             }
